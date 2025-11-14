@@ -151,7 +151,7 @@ def commit_to_github():
             return "Error: token no configurado.<br><a href='/'>Volver</a>"
         
         repo_owner = "AlemEsv"
-        repo_name = "digitos_colores"
+        repo_name = "digitos-colores"
         
         headers = {
             'Authorization': f'token {github_token}',
