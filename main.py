@@ -177,11 +177,15 @@ def commit_to_github():
         # Crear blobs y tree para las imágenes
         tree_items = []
         image_count = 0
+        max_images_per_commit = 50
         
         for digit in range(10):
             digit_folder = os.path.join(os.getcwd(), str(digit))
             if os.path.exists(digit_folder):
                 for img_file in glob.glob(os.path.join(digit_folder, '*.png')):
+                    if image_count >= max_images_per_commit:
+                        break
+                    
                     with open(img_file, 'rb') as f:
                         content = base64.b64encode(f.read()).decode('utf-8')
                     
@@ -203,6 +207,9 @@ def commit_to_github():
                             'sha': blob_sha
                         })
                         image_count += 1
+            
+            if image_count >= max_images_per_commit:
+                break
         
         if image_count == 0:
             return "No hay imágenes nuevas para subir.<br><a href='/'>Volver</a>"
