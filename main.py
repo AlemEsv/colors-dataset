@@ -178,6 +178,7 @@ def commit_to_github():
         tree_items = []
         image_count = 0
         max_images_per_commit = 50
+        uploaded_files = []  # Para rastrear archivos subidos
         
         for digit in range(10):
             digit_folder = os.path.join(os.getcwd(), str(digit))
@@ -206,6 +207,7 @@ def commit_to_github():
                             'type': 'blob',
                             'sha': blob_sha
                         })
+                        uploaded_files.append(img_file)  # Guardar ruta del archivo subido
                         image_count += 1
             
             if image_count >= max_images_per_commit:
@@ -250,7 +252,14 @@ def commit_to_github():
         update_response = requests.patch(update_ref_url, headers=headers, json=update_data)
         
         if update_response.status_code == 200:
-            return f"<a href='/'>Continuar dibujando</a>"
+            # Eliminar archivos locales después de subirlos exitosamente
+            for uploaded_file in uploaded_files:
+                try:
+                    os.remove(uploaded_file)
+                except Exception as e:
+                    print(f"Error al eliminar {uploaded_file}: {e}")
+            
+            return f"imágenes subidas exitosamente<br><a href='/commit'>Subir más</a> | <a href='/'>Continuar dibujando</a>"
         else:
             return f"Error al actualizar<br><a href='/'>Volver</a>"
             
